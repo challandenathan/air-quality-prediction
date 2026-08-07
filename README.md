@@ -22,4 +22,5 @@ This project predicts PM2.5 concentrations using historical weather observations
 - Pandas
 - Scikit-Learn
 - Matplotlib
-#for the virtual environment use: conda env create -f environment.yml
+## Instructions
+- for the virtual environment use: conda env create -f environment.yml
