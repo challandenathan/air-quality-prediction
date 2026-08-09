@@ -1,7 +1,7 @@
 # air-quality-prediction
 
 This project predicts PM2.5 concentrations using historical weather observations and machine learning models.
-
+We are aiming to create weather-only model and also a weather + pollution model
 ## Dataset
 
 - Beijing Multi-Site Air Quality Dataset (UCI)
