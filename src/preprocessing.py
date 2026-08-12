@@ -58,28 +58,14 @@ validation = validation.sort_values(["station","datetime"]).copy()
 test = test.sort_values(["station","datetime"]).copy()
 validation[weather_columns] = (validation.groupby("station")[weather_columns].transform(lambda x: x.interpolate()))
 test[weather_columns] = (test.groupby("station")[weather_columns].transform(lambda x: x.interpolate()))
-#results of the interpolation
-print("Train:")
-print(train[weather_columns].isna().sum())
 
-print("\nValidation:")
-print(validation[weather_columns].isna().sum())
-
-print("\nTest:")
-print(test[weather_columns].isna().sum())
 #now we preprocess the wind direction data which is a categorical feature
-print("Train for the sw feature:", train["wd"].isna().sum())
-print("Validation for the sw feature:", validation["wd"].isna().sum())
-print("Test for the sw feature:", test["wd"].isna().sum())
-print(train["wd"].value_counts(dropna=False))
+
 #we fill the missing values with the most frequent value in the training dataset for each station
 wd_mode = train.groupby("station")["wd"].agg(lambda x: x.mode().iloc[0])
 train["wd"] = train["wd"].fillna(train["station"].map(wd_mode))
 validation["wd"] = validation["wd"].fillna(validation["station"].map(wd_mode))
 test["wd"] = test["wd"].fillna(test["station"].map(wd_mode))
-print("Train missing wd:", train["wd"].isna().sum())
-print("Validation missing wd:", validation["wd"].isna().sum())
-print("Test missing wd:", test["wd"].isna().sum())
 
 #we finished the preprocessing of the weather variables, we now start the preprocessing for the pollution variables (useful for model 2)
 pollution_columns = [
@@ -221,3 +207,70 @@ y_train_pollution = train_pollution["PM2.5"].to_numpy()
 y_validation_pollution = validation_pollution["PM2.5"].to_numpy()
 
 y_test_pollution = test_pollution["PM2.5"].to_numpy()
+
+#creation of the controlled dataset
+#for model1
+pollution_columns = [
+    "PM10",
+    "SO2",
+    "NO2",
+    "CO",
+    "O3"
+]
+train_common = train.dropna(subset=pollution_columns).copy()
+validation_common = validation.dropna(subset=pollution_columns).copy()
+X_train_common_num = train_common[
+    numerical_features
+].to_numpy()
+
+X_validation_common_num = validation_common[
+    numerical_features
+].to_numpy()
+X_train_common_cat = encoder.transform(
+    train_common[categorical_features]
+)
+
+X_validation_common_cat = encoder.transform(
+    validation_common[categorical_features]
+)
+X_train_common = np.hstack([
+    X_train_common_num,
+    X_train_common_cat
+])
+
+X_validation_common = np.hstack([
+    X_validation_common_num,
+    X_validation_common_cat
+])
+y_train_common = train_common["PM2.5"].to_numpy()
+
+y_validation_common = validation_common["PM2.5"].to_numpy()
+#for model2
+X_train_common_pollution_num = train_common[
+    numerical_features_pollution
+].to_numpy()
+
+X_validation_common_pollution_num = validation_common[
+    numerical_features_pollution
+].to_numpy()
+X_train_common_pollution_cat = encoder.transform(
+    train_common[categorical_features]
+)
+
+X_validation_common_pollution_cat = encoder.transform(
+    validation_common[categorical_features]
+)
+X_train_common_pollution = np.hstack([
+    X_train_common_pollution_num,
+    X_train_common_pollution_cat
+])
+
+X_validation_common_pollution = np.hstack([
+    X_validation_common_pollution_num,
+    X_validation_common_pollution_cat
+])
+y_train_common_pollution = train_common["PM2.5"].to_numpy()
+
+y_validation_common_pollution = (
+    validation_common["PM2.5"].to_numpy()
+)
