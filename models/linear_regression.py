@@ -11,5 +11,5 @@ def evaluate_model(model, X_validation, y_validation):
     mae = mean_absolute_error(y_validation, y_validation_pred)
     rmse = np.sqrt(mean_squared_error(y_validation, y_validation_pred))
     r2 = r2_score(y_validation, y_validation_pred)
-    return mae, rmse, r2
+    return y_validation_pred, mae, rmse, r2
 

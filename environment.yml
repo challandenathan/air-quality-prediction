@@ -8,4 +8,6 @@ dependencies:
   - scikit-learn
   - jupyter
   - matplotlib
+  - seaborn
+  - py-xgboost
 prefix: /opt/anaconda3/envs/air-quality
