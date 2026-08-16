@@ -57,6 +57,7 @@ class PredictionResponse(BaseModel):
     latitude: float
     longitude: float
     inputs: PredictionInputs
+    measured_pm25: float
     predicted_pm25: float = Field(
         description="Predicted PM2.5 concentration (µg/m³)"
     )
@@ -92,5 +93,6 @@ def predict(station: str,request: Request):
         inputs=PredictionInputs(
             **result["inputs"]
         ),
+        measured_pm25=result["measured_pm25"],
         predicted_pm25=result["prediction"]
     )

@@ -64,6 +64,7 @@ def get_air_quality(latitude, longitude):
         "latitude": latitude,
         "longitude": longitude,
         "current": [
+            "pm2_5",
             "pm10",
             "carbon_monoxide",
             "nitrogen_dioxide",
@@ -82,6 +83,10 @@ def get_air_quality(latitude, longitude):
 
     return response.json()
 def degrees_to_wind_direction(degrees):
+
+    if degrees is None:
+        return "N"
+
     directions = [
         "N",
         "NNE",
@@ -100,6 +105,7 @@ def degrees_to_wind_direction(degrees):
         "NW",
         "NNW"
     ]
+
     index = int((degrees + 11.25) / 22.5) % 16
 
     return directions[index]
@@ -200,15 +206,15 @@ def predict_current_pm25(station,model,encoder):
     
     weather = get_weather(latitude, longitude)
     air_quality = get_air_quality(latitude, longitude)
-
-    
+   
     features = create_api_features(
         weather,
         air_quality
     )
 
     timestamp = air_quality["current"]["time"]
-
+    measured_pm25 = air_quality["current"]["pm2_5"]
+        
     api_df = create_api_dataframe(
         features,
         timestamp,
@@ -250,6 +256,7 @@ def predict_current_pm25(station,model,encoder):
     prediction = max(0.0, prediction)
 
     return {"prediction":round(prediction,2),
+            "measured_pm25" : measured_pm25,
             "timestamp": timestamp,
             "latitude": latitude,
             "longitude": longitude,

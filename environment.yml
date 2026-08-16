@@ -11,4 +11,5 @@ dependencies:
   - seaborn
   - py-xgboost
   - fastapi
+  - streamlit
 prefix: /opt/anaconda3/envs/air-quality
