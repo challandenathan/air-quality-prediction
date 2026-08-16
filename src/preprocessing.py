@@ -3,8 +3,12 @@ from pathlib import Path
 import sys
 import numpy as np
 from sklearn.preprocessing import OneHotEncoder
+project_root = Path(__file__).resolve().parent.parent
+sys.path.insert(0,str(project_root))
+import src
+from src.api import add_cyclic_features
 #load the raw data for preprocessing
-sys.path.append(str(Path("..").resolve()))
+
 from src.load_data import load_data
 df = load_data("data/raw")
 
@@ -78,27 +82,7 @@ pollution_columns = [
 
 #now we create the temporal features for both models
 #we will create hours, days of the week and months features with periodicity encoding using sine and cosine
-def add_cyclic_features(df):
-    df = df.copy()
 
-    df["hour"] = df["datetime"].dt.hour
-    df["month"] = df["datetime"].dt.month
-    df["day_of_week"] = df["datetime"].dt.dayofweek
-
-    df["hour_sin"] = np.sin(2 * np.pi * df["hour"] / 24)
-    df["hour_cos"] = np.cos(2 * np.pi * df["hour"] / 24)
-
-    df["month_sin"] = np.sin(2 * np.pi * df["month"] / 12)
-    df["month_cos"] = np.cos(2 * np.pi * df["month"] / 12)
-
-    df["day_of_week_sin"] = np.sin(
-        2 * np.pi * df["day_of_week"] / 7
-    )
-    df["day_of_week_cos"] = np.cos(
-        2 * np.pi * df["day_of_week"] / 7
-    )
-
-    return df
 train = add_cyclic_features(train)
 validation = add_cyclic_features(validation)
 test = add_cyclic_features(test)
@@ -112,6 +96,12 @@ test_pollution = test.dropna(subset= pollution_columns).copy()
 categorical_features = ["wd","station"]
 encoder = OneHotEncoder(handle_unknown="ignore",sparse_output=False)
 encoder.fit(train[categorical_features])
+import joblib
+project_root = Path(__file__).resolve().parent.parent
+ENCODER_PATH = project_root / "models"/"saved"/"one_hot_encoder.joblib"
+print(ENCODER_PATH)
+ENCODER_PATH.parent.mkdir(parents = True, exist_ok = True)
+joblib.dump(encoder,ENCODER_PATH)
 X_train_cat = encoder.transform(train[categorical_features])
 X_validation_cat = encoder.transform(validation[categorical_features])
 X_test_cat = encoder.transform(test[categorical_features])

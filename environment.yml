@@ -10,4 +10,5 @@ dependencies:
   - matplotlib
   - seaborn
   - py-xgboost
+  - fastapi
 prefix: /opt/anaconda3/envs/air-quality
