@@ -188,6 +188,26 @@ To predict the current PM2.5 concentration at Aotizhongxin:
 GET /predict?station=Aotizhongxin
 The API retrieves the latest available environmental information for the station and feeds the resulting feature vector into the trained XGBoost model.
 
+## Streamlit Frontend
+A Streamlit frontend provides a simple interactive interface for the live prediction API.
+
+The frontend communicates with the FastAPI backend rather than running the machine-learning model directly. Users can select one of the available Beijing monitoring stations and request a live PM2.5 prediction.
+
+The dashboard displays:
+
+- Selected monitoring station
+- Station coordinates
+- Predicted PM2.5 concentration
+- Current meteorological conditions
+- Current pollutant concentrations
+- Data timestamp
+- Open-Meteo PM2.5 reference value, when available
+
+To start the frontend, first launch the FastAPI backend: fastapi dev
+
+Then, in a second terminal: streamlit run frontend/app.py
+
+
 ## Technologies
 The project uses:
 
@@ -203,5 +223,6 @@ The project uses:
 - Open-Meteo API
 - Jupyter Notebook
 - Conda
+- Streamlit
 
 
